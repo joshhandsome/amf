@@ -73,10 +73,7 @@ func newRouter(s *Server) *gin.Engine {
 	router.Use(metrics.InboundMetrics())
 	amfHttpCallBackGroup := router.Group(factory.AmfCallbackResUriPrefix)
 	amfHttpCallBackRoutes := s.getHttpCallBackRoutes()
-	callbackAuthCheck := util_oauth.NewRouterAuthorizationCheck(amf_context.ServiceNameNamfCallback)
-	amfHttpCallBackGroup.Use(func(c *gin.Context) {
-		callbackAuthCheck.Check(c, amf_context.GetSelf())
-	})
+	// TS 29.500 Rel-17, clauses 6.7.3 and 6.10.7: callbacks do not use OAuth access tokens.
 	applyRoutes(amfHttpCallBackGroup, amfHttpCallBackRoutes)
 
 	for _, serverName := range factory.AmfConfig.Configuration.ServiceNameList {
